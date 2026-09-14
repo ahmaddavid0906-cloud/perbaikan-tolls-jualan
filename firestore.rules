@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() &&
+             (request.auth.token.email in ['davidrohman037@gmail.com', 'ahmaddavid0906@gmail.com', 'globallensn@gmail.com'] ||
+              (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+    }
+
+    match /clients/{clientId} {
+      allow read, write: if true;
+    }
+
+    match /packages/{packageId} {
+      allow read, write: if true;
+    }
+
+    match /apiKeys/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /history/{historyId} {
+      allow read, write: if true;
+    }
+
+    match /apiKeyUsageLogs/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /configs/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /trackingEvents/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /learningQueue/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /transactions/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /aiAgents/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /auditLogs/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /categoryTaxonomy/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /categoryTaxonomyProposals/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /accessCodes/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /bannedDevices/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /pendingSchemaChanges/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /announcements/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /promptFormulas/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /affiliates/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
